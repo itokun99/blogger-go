@@ -56,7 +56,7 @@ func main() {
     posts, err := client.Posts().List(ctx, "1234567890",
         blogger.WithMaxResults(10),
         blogger.WithStatus(blogger.PostStatusLive),
-        blogger.WithOrderBy("published"),
+        blogger.WithOrderBy(blogger.OrderByPublished),
     )
     if err != nil {
         log.Fatal(err)
@@ -105,29 +105,38 @@ client.PostUserInfos()   *PostUserInfosService
 
 ### Status Constants
 
+The same values are exported from the root package and from `gen/services`, so
+`blogger.PostStatusLive` and `services.PostStatusLive` are interchangeable.
+
 ```go
 // Post status values
-PostStatusLive         = "LIVE"
-PostStatusDraft        = "DRAFT"
-PostStatusScheduled    = "SCHEDULED"
-PostStatusSoftTrashed  = "SOFT_TRASHED"
+blogger.PostStatusLive         = "LIVE"
+blogger.PostStatusDraft        = "DRAFT"
+blogger.PostStatusScheduled    = "SCHEDULED"
+blogger.PostStatusSoftTrashed  = "SOFT_TRASHED"
 
 // Comment status values
-CommentStatusLive      = "LIVE"
-CommentStatusEmptied   = "EMPTIED"
-CommentStatusPending   = "PENDING"
-CommentStatusSpam      = "SPAM"
+blogger.CommentStatusLive      = "LIVE"
+blogger.CommentStatusEmptied   = "EMPTIED"
+blogger.CommentStatusPending   = "PENDING"
+blogger.CommentStatusSpam      = "SPAM"
 
 // Page status values
-PageStatusLive         = "LIVE"
-PageStatusDraft        = "DRAFT"
-PageStatusSoftTrashed  = "SOFT_TRASHED"
+blogger.PageStatusLive         = "LIVE"
+blogger.PageStatusDraft        = "DRAFT"
+blogger.PageStatusSoftTrashed  = "SOFT_TRASHED"
 
 // View types
-ViewTypeUnspecified    = "VIEW_TYPE_UNSPECIFIED"
-ViewReader             = "READER"
-ViewAuthor             = "AUTHOR"
-ViewAdmin              = "ADMIN"
+blogger.ViewTypeUnspecified    = "VIEW_TYPE_UNSPECIFIED"
+blogger.ViewReader             = "READER"
+blogger.ViewAuthor             = "AUTHOR"
+blogger.ViewAdmin              = "ADMIN"
+
+// Order and sort values
+blogger.OrderByPublished       = "PUBLISHED"
+blogger.OrderByUpdated         = "UPDATED"
+blogger.SortOrderDescending    = "DESCENDING"
+blogger.SortOrderAscending     = "ASCENDING"
 ```
 
 ### Schema Models
