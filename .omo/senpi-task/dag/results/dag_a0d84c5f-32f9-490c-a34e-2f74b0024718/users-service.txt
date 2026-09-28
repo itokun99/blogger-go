@@ -1,0 +1,14 @@
+> Ask: implement the Users service (`UsersService` + `NewUsersService` + builder-pattern `Get` for `GET /v3/users/{userId}`) in `gen/services/users.go`, compiling cleanly - wanted: the file exists and `go build ./gen/services/...` exits 0. For you: `users.go` is written and verified compiling in isolation, but the package build is still red because two sibling files that predate this task are broken; details below. Now: none. Next: none.
+
+## Delivered
+
+**`/Users/aleph/Projects/blogger-go/gen/services/users.go`** (new, scoped exactly as asked) — `package services`, `UsersService` struct with a `*blogger.Client` field, `NewUsersService(client *blogger.Client) *UsersService`, and `Get(ctx, userId string) (*schemas.User, error)` issuing `GET v3/users/{userId}` through `builder.New(...).Context(ctx).Do(...)`, matching the existing `pages.go`/`posts.go` shape (same header comment, `url.PathEscape` path helper, `transport()` + adapter implementing `builder.HTTPClient`).
+
+## Verification
+
+- **Isolated build of my file: exit 0.** Copied `users.go` into a temp package with the repo's `go.mod`/`go.sum`, added the shared `requireValues` helper, ran `go build ./...` → `PROBE_BUILD_EXIT=0`. `gofmt -l` reports it clean.
+- **`go build ./gen/services/...`: exit 1 — pre-existing, not caused by this file.** The failure list contains zero `users.go` lines:
+  - `blogs.go:26,42,58` — `undefined: validateIDs`; `blogs.go:74,76` — `undefined: bloggerClient`. Those helpers live only in `pages.go`/`posts.go`, which define them with *different* names (`requireValues`, `postsClient`).
+  - `comments.go:189:59` — `cannot use s.client.HTTPClient() (*http.Client) as func(*http.Request) (*http.Response, error)`. The package does not compile at 14:56, before I wrote anything; the very first build I ran (before creating `users.go`) failed with the same class of errors.
+
+So the stated stop condition ("compiles cleanly") holds for the deliverable file but not for the package, and I did not widen scope to fix siblings. To get `go build ./gen/services/...` green, the package needs one shared naming decision — either rename `requireValues`/`postsClient` to the `validateIDs`/`bloggerClient` names `blogs.go` and `pages.go` reference, or update `blogs.go`/`pages.go` to the `posts.go` names — plus the one-line `comments.go` transport fix. Say the word and I'll make that call.

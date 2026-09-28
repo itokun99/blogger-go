@@ -1,0 +1,27 @@
+# Compiled binaries and test output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Dependency and build artifact directories
+vendor/
+.modcache/
+_output/
+bin/
+dist/
+
+# Go workspace files (module-local)
+go.work
+go.work.sum
+
+# Editor / OS noise
+.idea/
+.vscode/
+.DS_Store
+*.swp

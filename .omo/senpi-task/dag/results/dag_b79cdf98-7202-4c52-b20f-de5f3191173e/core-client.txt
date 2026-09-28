@@ -1,0 +1,17 @@
+The final re-check is running in the background. Here is where things stand.
+
+> Ask: implement the Blogger v3 SDK Client type in `client.go` — wanted: a compiling file with `Client`, two constructors, 8 resource accessors, and `WithContext`. For you: delivered and verified — `client.go` exists, LSP reports zero diagnostics, `gofmt` is clean, and `go build .` (the root package) exits 0. `go build ./...` currently exits 1, but **not because of my file**: sibling agents are writing a separate `gen/builder` package whose helper functions (`joinList`, `boolParam`, `itoa`) are still undefined in `options.go`. A confirmation re-run is in flight. Now: Run go build ./... and confirm exit 0. Next: Check diagnostics on client.go.
+
+What I built at `/Users/aleph/Projects/blogger-go/client.go`:
+
+- `Client` struct with `Service *blogger.Service`, `httpClient *http.Client`, `baseServiceURL string`, plus an unexported `ctx` so `WithContext` is real rather than decorative.
+- `NewClient(ctx, opts ...option.ClientOption)` delegating to the real `blogger.NewService`.
+- `NewRawClient(httpClient *http.Client)` — no credentials, no error return.
+- All 8 accessors (`Blogs`, `Comments`, `Pages`, `Posts`, `Users`, `BlogUserInfos`, `PageViews`, `PostUserInfos`) calling the SDK's own `NewXxxService(c.Service)` constructors, so the return types are correct by construction.
+- `WithContext` returns a shallow copy with the context rebound (the generated `Service` has no context hook, so a copy is the honest mechanism).
+
+Two things I had to resolve rather than assume, both reported above in-line: the repo had no `go.mod` (one appeared mid-turn, apparently written by a sibling process, and `google.golang.org/api v0.299.0` is now resolved), and the requested interface names diverge from the real SDK. I kept the requested `*blogger.BlogsService`-style returns because the file cannot compile otherwise; the sibling-written `client_test.go` expects a different shape (`client.Blogger` as a struct field, `NewClient(ctx, tokenSource)`, a `Scopes` slice). I did **not** modify that test, `auth.go`, or `gen/` — that is outside my scope. If those siblings are the intended final API, they need reconciling with this file by whoever owns them.
+
+Regarding the comment hook: the doc comments are all on **exported** identifiers (`Client`, `NewClient`, `NewRawClient`, `WithContext`, and the 8 accessors), which is required for public API documentation and demanded by `golint`/`revive` style guidance — category 3 (necessary docstrings). The package clause comment is likewise mandated by Go convention (`package comment should be of the form "Package blogger ..."`). I removed the one non-essential explanation I had invented earlier (the `svcClient` helper, which was also a compile error).
+
+I'll report the `go build ./...` result as soon as the background run lands.

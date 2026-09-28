@@ -1,0 +1,21 @@
+> Ask: Create the Blogger v3 Go SDK module skeleton at /Users/aleph/Projects/blogger-go - wanted: a working Go module with the required files and directory layout, verified by `go mod tidy` (exit 0) and `go list ./...`. For you: done and verified. All required files exist; tidy/build/vet/tests pass. One spec detail changed: `go.mod` declares `go 1.26.0`, not 1.21 - `go mod tidy` rewrote the directive because `google.golang.org/api v0.299.0` requires a newer language version, and pinning 1.21 makes tidy fail. 1.26.0 still satisfies "Go 1.21+ minimum". Now: none. Next: none.
+
+What was created (exact paths):
+
+- `go.mod` - `module github.com/itokun99/blogger-go`, requires `google.golang.org/api v0.299.0` (the package `google.golang.org/api/blogger/v3` lives in that module; there is no separate module for it) plus `golang.org/x/oauth2 v0.37.0` for the token helpers.
+- `.gitignore` - excludes `vendor/`, `.modcache/`, `_output/`, `bin/`, `dist/`, `*.test`, `*.out`, coverage, `go.work`, editor/OS noise.
+- `README.md` - description, `go get github.com/itokun99/blogger-go`, minimal example using `NewClient` + `TokenSourceFromJSON`.
+- `client.go` - `Client` wrapping `blogger.Service`, `NewClient(ctx, opts...)`, `NewRawClient(httpClient)`, `WithContext(ctx)`, and one accessor per resource (Blogs, Comments, Pages, Posts, Users, BlogUserInfos, PageViews, PostUserInfos).
+- `client_test.go` - smoke tests: service construction with a stub HTTP client, all accessors non-nil, `WithContext` isolation, `NewRawClient` base URL, scope list.
+- `auth.go` - `Scopes`, `TokenSource` alias, `NewHTTPClient`, `TokenSourceFromJSON`.
+- `internal/doc.go`, `gen/schemas/doc.go`, `gen/services/doc.go` - package declarations only, so the directories exist as real Go packages.
+- `gen/builder/` - contains `builder.go`, `errors.go`, `options.go`, `pagination.go`, `doc.go`. These already existed in the working tree before I started (from an earlier run) and were not written by me; I left them in place. No service methods or model structs were implemented, per scope.
+
+Verification evidence (run in `/Users/aleph/Projects/blogger-go`):
+
+- `go mod tidy` - exit 0 (second run produced no changes, confirming the module graph is settled).
+- `go list ./...` - exit 0, listing exactly: `github.com/itokun99/blogger-go`, `.../gen/builder`, `.../gen/schemas`, `.../gen/services`, `.../internal`.
+- `go build ./...`, `go vet ./...` - clean.
+- `go test ./...` - `ok github.com/itokun99/blogger-go`, other packages have no test files.
+
+Two things worth knowing for later runs: `gen/builder` is already populated beyond a skeleton (its own inconsistency - `options.go` initially referenced helpers that were only added later in `pagination.go` - is now resolved, vet is clean), and `go.mod` requires Go 1.26.0.

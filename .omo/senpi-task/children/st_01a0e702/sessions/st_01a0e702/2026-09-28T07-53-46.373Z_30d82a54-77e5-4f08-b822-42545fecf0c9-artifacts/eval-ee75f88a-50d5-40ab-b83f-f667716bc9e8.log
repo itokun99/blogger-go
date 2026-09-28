@@ -1,0 +1,86 @@
+{
+ "text": "client.go\n24: \tbaseServiceURL string\n30: func NewClient(ctx context.Context, opts ...option.ClientOption) (*Client, error) {\n39: \t\tbaseServiceURL: svc.BasePath,\n46: func NewRawClient(httpClient *http.Client) *Client {\n50: \t\tbaseServiceURL: defaultBaseServiceURL,\n56: func (c *Client) WithContext(ctx context.Context) *Client {\n63: func (c *Client) Blogs() *blogger.BlogsService {\n68: func (c *Client) Comments() *blogger.CommentsService {\n73: func (c *Client) Pages() *blogger.PagesService {\n78: func (c *Client) Posts() *blogger.PostsService {\n83: func (c *Client) Users() *blogger.UsersService {\n88: func (c *Client) BlogUserInfos() *blogger.BlogUserInfosService {\n93: func (c *Client) PageViews() *blogger.PageViewsService {\n98: func (c *Client) PostUserInfos() *blogger.PostUserInfosService {\n\n[grep: matches=14 files=1 searched=1 elapsedMs=31 engine=rg nextSkip=none]",
+ "details": {
+  "version": 1,
+  "engine": "rg",
+  "status": "ok",
+  "cwd": "/Users/aleph/Projects/blogger-go",
+  "paths": [
+   "/Users/aleph/Projects/blogger-go/client.go"
+  ],
+  "matches": [
+   {
+    "path": "client.go",
+    "line": 24,
+    "column": 2,
+    "text": "\tbaseServiceURL string",
+    "isContext": false,
+    "truncated": false
+   },
+   {
+    "path": "client.go",
+    "line": 30,
+    "column": 1,
+    "text": "func NewClient(ctx context.Context, opts ...option.ClientOption) (*Client, error) {",
+    "isContext": false,
+    "truncated": false
+   },
+   {
+    "path": "client.go",
+    "line": 39,
+    "column": 3,
+    "text": "\t\tbaseServiceURL: svc.BasePath,",
+    "isContext": false,
+    "truncated": false
+   },
+   {
+    "path": "client.go",
+    "line": 46,
+    "column": 1,
+    "text": "func NewRawClient(httpClient *http.Client) *Client {",
+    "isContext": false,
+    "truncated": false
+   },
+   {
+    "path": "client.go",
+    "line": 50,
+    "column": 3,
+    "text": "\t\tbaseServiceURL: defaultBaseServiceURL,",
+    "isContext": false,
+    "truncated": false
+   },
+   {
+  
+internal/doc.go
+
+internal:
+doc.go
+--- grep Client methods ---
+client.go:30:func NewClient(ctx context.Context, opts ...option.ClientOption) (*Client, error) {
+client.go:46:func NewRawClient(httpClient *http.Client) *Client {
+client.go:56:func (c *Client) WithContext(ctx context.Context) *Client {
+client.go:63:func (c *Client) Blogs() *blogger.BlogsService {
+client.go:68:func (c *Client) Comments() *blogger.CommentsService {
+client.go:73:func (c *Client) Pages() *blogger.PagesService {
+client.go:78:func (c *Client) Posts() *blogger.PostsService {
+client.go:83:func (c *Client) Users() *blogger.UsersService {
+client.go:88:func (c *Client) BlogUserInfos() *blogger.BlogUserInfosService {
+client.go:93:func (c *Client) PageViews() *blogger.PageViewsService {
+client.go:98:func (c *Client) PostUserInfos() *blogger.PostUserInfosService {
+auth.go:24:func NewHTTPClient(ctx context.Context, ts TokenSource) *http.Client {
+auth.go:32:func TokenSourceFromJSON(credentialsFile, tokenFile string) (TokenSource, error) {
+auth.go:54:func tokenFromFile(path string) (*oauth2.Token, error) {
+client_test.go:14:func staticTokenSource(token string) TokenSource {
+client_test.go:18:func newTestClient(t *testing.T) *Client {
+client_test.go:33:func TestNewClientBuildsService(t *testing.T) {
+client_test.go:44:func TestClientAccessorsReturnServices(t *testing.T) {
+client_test.go:63:func TestWithContextReturnsIndependentClient(t *testing.T) {
+client_test.go:79:func TestRawClientUsesDefaultBaseURL(t *testing.T) {
+client_test.go:89:func TestScopesCoverBloggerAPI(t *testing.T) {
+client_test.go:100:func TestNewHTTPClientWrapsTokenSource(t *testing.T) {
+--- grep services import usage ---
+./gen/builder/builder.go:22:	BasePath() string
+./gen/builder/builder.go:177:	return provider.BasePath()
+./gen/services/blogs.go:33:	response, err := builder.New(http.MethodGet, "/blogs/"+blogId).
+./gen/services/blogs.go:49:	response, err := builder.New(http.MethodGet, "/blogs/byurl").
+./gen/services/blogs.go:67:	response, err := builder.New(http.MethodGet, "/users/"+userId+"/blogs").
